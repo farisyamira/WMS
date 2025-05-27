@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1052215173330",
+    "firebase_url": "https://wms2025-589e3-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "wms2025-589e3",
+    "storage_bucket": "wms2025-589e3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1052215173330:android:6e34aacdf0af0161618d0b",
+        "android_client_info": {
+          "package_name": "com.example.wms"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9L0JKDllZ_44Sxb2P1La5Z6PTczNp8fk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
