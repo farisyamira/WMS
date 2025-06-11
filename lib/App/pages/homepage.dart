@@ -71,7 +71,9 @@ class HomePage extends StatelessWidget {
           children: [
             _buildTile("Profile", Icons.person, () {}),
             _buildTile("Schedule", Icons.calendar_today, () {}),
-            _buildTile("Inventory", Icons.inventory, () {}),
+            _buildTile("Inventory", Icons.inventory, () {
+              Navigator.pushNamed(context, '/inventory');
+            }),
             _buildTile("Payment", Icons.credit_card, () {}),
             _buildTile("Rating", Icons.star, () {}),
             _buildTile("Activity Report", Icons.bar_chart, () {}),

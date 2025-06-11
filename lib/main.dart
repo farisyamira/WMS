@@ -1,7 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:wms/App/Pages/ManageShopInventory/ShopInventory.dart';
 import 'package:wms/App/Pages/homepage.dart';
+import 'package:wms/App/pages/ManageShopInventory/AddInventoryForm.dart';
+import 'package:wms/App/pages/ManageShopInventory/InventoryDetail.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +43,11 @@ class WMSApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
       ),
       home: const HomePage(),
+      routes: {
+        '/inventory': (context) => const ShopInventoryPage(),
+        '/add-item': (context) => const AddInventoryForm(),
+        '/item-detail': (context) => const InventoryDetail(item:),
+      },
     );
   }
 }
