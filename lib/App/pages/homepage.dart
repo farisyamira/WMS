@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:wms/App/Pages/ManageProfile/LoginPage.dart'; 
+
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -32,16 +34,26 @@ class HomePage extends StatelessWidget {
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
-          children: const [
-            DrawerHeader(
+          children: [
+            const DrawerHeader(
               decoration: BoxDecoration(color: Colors.blue),
               child: Text(
                 "Menu",
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
-            ListTile(title: Text("Settings")),
-            ListTile(title: Text("Logout")),
+            const ListTile(title: Text("Settings")),
+            ListTile(
+  title: const Text("Logout"),
+  leading: const Icon(Icons.logout),
+  onTap: () {
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+      (route) => false,
+    );
+  },
+),
+
           ],
         ),
       ),
@@ -69,7 +81,9 @@ class HomePage extends StatelessWidget {
           crossAxisSpacing: 24,
           mainAxisSpacing: 24,
           children: [
-            _buildTile("Profile", Icons.person, () {}),
+            _buildTile("Profile", Icons.person, () {
+              Navigator.pushNamed(context,'/woprofile');
+            }),
             _buildTile("Schedule", Icons.calendar_today, () {}),
             _buildTile("Inventory", Icons.inventory, () {}),
             _buildTile("Payment", Icons.credit_card, () {}),

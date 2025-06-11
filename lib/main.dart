@@ -1,7 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:wms/App/Pages/ManageProfile/WorkshopOwner_ProfilePage.dart';
 import 'package:wms/App/Pages/homepage.dart';
+import 'package:wms/App/Pages/ManageProfile/LoginPage.dart';
+import 'package:wms/App/Pages/ManageProfile/Registration.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +18,7 @@ void main() async {
         databaseURL:
             "https://wms2025-589e3-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "wms2025-589e3",
-        storageBucket: "wms2025-589e3.firebasestorage.app",
+        storageBucket: "wms2025-589e3.appspot.com", // ✅
         messagingSenderId: "1052215173330",
         appId: "1:1052215173330:web:46970592382c34d5618d0b",
         measurementId: "G-5XF5JF7XP6",
@@ -40,6 +44,11 @@ class WMSApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
       ),
       home: const HomePage(),
+      routes: {
+        '/login': (context) => const LoginPage(),
+  '/register': (context) => const RegistrationPage(), // ✅ Add this
+  
+      },
     );
   }
 }
