@@ -1,11 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:wms/App/Pages/ManageProfile/ChangePassword.dart';
+import 'package:wms/App/Pages/ManageProfile/DeleteProfile.dart';
+import 'package:wms/App/Pages/ManageProfile/EditProfile.dart';
 import 'package:wms/App/Pages/ManageProfile/WorkshopOwner_ProfilePage.dart';
 import 'package:wms/App/Pages/homepage.dart';
 import 'package:wms/App/Pages/ManageProfile/LoginPage.dart';
 import 'package:wms/App/Pages/ManageProfile/Registration.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +21,7 @@ void main() async {
         databaseURL:
             "https://wms2025-589e3-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "wms2025-589e3",
-        storageBucket: "wms2025-589e3.appspot.com", // ✅
+        storageBucket: "wms2025-589e3.appspot.com",
         messagingSenderId: "1052215173330",
         appId: "1:1052215173330:web:46970592382c34d5618d0b",
         measurementId: "G-5XF5JF7XP6",
@@ -43,12 +46,32 @@ class WMSApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: const HomePage(),
+      home: const AuthWrapper(), // Use the wrapper
       routes: {
         '/login': (context) => const LoginPage(),
-  '/register': (context) => const RegistrationPage(), // ✅ Add this
-  
+        '/register': (context) => const RegistrationPage(),
+        '/editProfile': (context) => const EditProfilePage(),
+        '/deleteProfile': (context) => const DeleteProfilePage(),
+        '/changePassword': (context) => const ChangePasswordPage(),
+
       },
     );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // User is signed in
+      return HomePage(userId: user.uid);
+    } else {
+      // User is not signed in
+      return const LoginPage();
+    }
   }
 }

@@ -1,82 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class ChangePassword extends StatefulWidget {
-  const ChangePassword({super.key});
+class ChangePasswordPage extends StatefulWidget {
+  const ChangePasswordPage({super.key});
 
   @override
-  State<ChangePassword> createState() => _ChangePasswordState();
+  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
 }
 
-class _ChangePasswordState extends State<ChangePassword> {
-  final _formKey = GlobalKey<FormState>();
-  final _oldPasswordController = TextEditingController();
-  final _newPasswordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  final TextEditingController _newPasswordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
-  void _updatePassword() {
+  Future<void> _changePassword() async {
     if (_formKey.currentState!.validate()) {
-      // Example: connect with ProfileController.changePassword()
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password changed successfully.')),
-      );
-      Navigator.pop(context);
+      setState(() => _isLoading = true);
+
+      try {
+        await FirebaseAuth.instance.currentUser!.updatePassword(
+          _newPasswordController.text.trim(),
+        );
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("✅ Password updated successfully")),
+        );
+        Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("❌ Error: ${e.toString()}")),
+        );
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
+      }
     }
   }
 
   @override
   void dispose() {
-    _oldPasswordController.dispose();
     _newPasswordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Change Password')),
+      appBar: AppBar(
+        title: const Text("Change Password"),
+        backgroundColor: Colors.teal,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
-          child: ListView(
+          child: Column(
             children: [
-              _buildPasswordField(_oldPasswordController, 'Old Password'),
-              const SizedBox(height: 16),
-              _buildPasswordField(_newPasswordController, 'New Password'),
-              const SizedBox(height: 16),
-              _buildPasswordField(_confirmPasswordController, 'Confirm New Password'),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _updatePassword,
-                child: const Text('Update Password'),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _newPasswordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: "New Password",
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.teal, width: 2),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) return 'Please enter a password';
+                  if (value.length < 6) return 'Password must be at least 6 characters';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _isLoading ? null : _changePassword,
+                  icon: const Icon(Icons.lock_reset),
+                  label: _isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Text("Update Password"),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    backgroundColor: Colors.teal,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildPasswordField(TextEditingController controller, String label) {
-    return TextFormField(
-      controller: controller,
-      obscureText: true,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) return 'Please enter $label';
-        if (label == 'New Password' && value.length < 6) {
-          return 'Password must be at least 6 characters';
-        }
-        if (label == 'Confirm New Password' &&
-            value != _newPasswordController.text) {
-          return 'Passwords do not match';
-        }
-        return null;
-      },
     );
   }
 }

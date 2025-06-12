@@ -36,15 +36,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
       if (result == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registration successful!')),
+          const SnackBar(content: Text('🎉 Registration successful!')),
         );
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LoginPage()),
+          MaterialPageRoute(builder: (_) => const LoginPage()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration failed: $result')),
+          SnackBar(content: Text('❌ Registration failed: $result')),
         );
       }
     }
@@ -68,35 +68,40 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('User Registration')),
-      body: Padding(
+      appBar: AppBar(
+        title: const Text('User Registration'),
+        backgroundColor: Colors.teal,
+        foregroundColor: Colors.white,
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
-          child: ListView(
+          child: Column(
             children: [
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _usernameController,
-                decoration: const InputDecoration(labelText: 'Username'),
+                decoration: _inputDecoration('Username'),
                 validator: (value) => _validateInput(value, 'Username'),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                decoration: _inputDecoration('Email'),
                 validator: (value) => _validateInput(value, 'Email'),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: const InputDecoration(labelText: 'Password'),
+                decoration: _inputDecoration('Password'),
                 validator: (value) => _validateInput(value, 'Password'),
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedRole,
-                decoration: const InputDecoration(labelText: 'Register As'),
+                decoration: _inputDecoration('Register As'),
                 items: const [
                   DropdownMenuItem(value: 'Workshop Owner', child: Text('Workshop Owner')),
                   DropdownMenuItem(value: 'Foreman', child: Text('Foreman')),
@@ -107,19 +112,59 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   }
                 },
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 30),
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
+                child: ElevatedButton.icon(
                   onPressed: _isLoading ? null : _registerUser,
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
+                  icon: const Icon(Icons.person_add),
+                  label: _isLoading
+                      ? const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 4),
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          ),
+                        )
                       : const Text('Register'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
+                  );
+                },
+                child: const Text(
+                  'Already have an account? Login here',
+                  style: TextStyle(color: Colors.teal),
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Colors.teal, width: 2),
       ),
     );
   }
