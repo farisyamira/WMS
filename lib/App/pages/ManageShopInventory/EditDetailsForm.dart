@@ -21,6 +21,7 @@ class _EditDetailsFormState extends State<EditDetailsForm> {
   late TextEditingController _barcodeController;
   late TextEditingController _quantityController;
   late TextEditingController _priceController;
+  late TextEditingController _workshopController;
 
   File? _imageFile;
   final picker = ImagePicker();
@@ -37,6 +38,9 @@ class _EditDetailsFormState extends State<EditDetailsForm> {
     );
     _priceController = TextEditingController(
       text: widget.item.unit_price.toString(),
+    );
+    _workshopController = TextEditingController(
+      text: widget.item.workshop_name,
     );
   }
 
@@ -60,6 +64,7 @@ class _EditDetailsFormState extends State<EditDetailsForm> {
         item_barcode: _barcodeController.text,
         quantity_available: int.parse(_quantityController.text),
         unit_price: double.parse(_priceController.text),
+        workshop_name: _workshopController.text,
       );
 
       await _controller.updateItem(widget.item.inventory_id, updatedItem);
@@ -117,6 +122,11 @@ class _EditDetailsFormState extends State<EditDetailsForm> {
                 controller: _priceController,
                 decoration: const InputDecoration(labelText: 'Price'),
                 keyboardType: TextInputType.number,
+                validator: (value) => value!.isEmpty ? 'Required' : null,
+              ),
+              TextFormField(
+                controller: _workshopController,
+                decoration: const InputDecoration(labelText: 'Workshop Name'),
                 validator: (value) => value!.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 24),

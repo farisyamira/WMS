@@ -7,6 +7,7 @@ class Inventory {
   final int quantity_available;
   final String item_barcode;
   final double unit_price;
+  final String workshop_name;
   final DateTime? item_created;
   final DateTime? item_updated;
 
@@ -17,6 +18,7 @@ class Inventory {
     required this.quantity_available,
     required this.item_barcode,
     required this.unit_price,
+    required this.workshop_name,
     this.item_created,
     this.item_updated,
   });
@@ -29,6 +31,7 @@ class Inventory {
       quantity_available: data['quantity_available'] ?? 0,
       item_barcode: data['itemBarcode'] ?? '',
       unit_price: (data['unit_price'] ?? 0.0).toDouble(),
+      workshop_name: data['workshop_name'] ?? '',
       item_created: (data['item_created'] as Timestamp?)?.toDate(),
       item_updated: (data['item_updated'] as Timestamp?)?.toDate(),
     );
@@ -41,6 +44,7 @@ class Inventory {
       'quantity_available': quantity_available,
       'itemBarcode': item_barcode,
       'unit_price': unit_price,
+      'workshop_name': workshop_name,
       'item_created':
           FieldValue.serverTimestamp(), // For Firestore auto timestamp
       'item_updated': FieldValue.serverTimestamp(),

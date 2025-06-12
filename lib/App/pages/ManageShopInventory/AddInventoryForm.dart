@@ -47,6 +47,7 @@ class _navigateToAddFormState extends State<navigateToAddForm> {
         item_barcode: _barcodeController.text,
         quantity_available: int.parse(_quantityController.text),
         unit_price: double.parse(_priceController.text),
+        workshop_name: _workshopController.text,
       );
 
       final controller = InventoryController();

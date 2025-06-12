@@ -99,6 +99,12 @@ class _ShopInventoryPageState extends State<ShopInventoryPage> {
                       item.imageUrl,
                       width: 60,
                       height: 60,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.image_not_supported,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
                     ),
                     title: Text(
                       item.item_name,
