@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:wms/App/domain/ManageShopInventory/Inventory.dart';
-import 'package:wms/App/provider/InventoryController.dart';
+import 'package:wms/App/Domain/ManageShopInventory/Inventory.dart';
+import 'package:wms/App/Provider/InventoryController.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ShopInventoryPage extends StatefulWidget {
   const ShopInventoryPage({super.key});
@@ -52,8 +55,9 @@ class _ShopInventoryPageState extends State<ShopInventoryPage> {
             child: Row(
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/add-item');
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, '/add-item');
+                    _fetchItems();
                   },
                   child: const Text('Add Item'),
                 ),
@@ -79,7 +83,7 @@ class _ShopInventoryPageState extends State<ShopInventoryPage> {
                       height: 60,
                     ),
                     title: Text(
-                      item.name,
+                      item.item_name,
                       style: const TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
@@ -88,18 +92,24 @@ class _ShopInventoryPageState extends State<ShopInventoryPage> {
                     trailing: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(item.quantity.toString()),
+                        Text(item.quantity_available.toString()),
                         const Text(
                           "View Details",
                           style: TextStyle(fontSize: 12),
                         ),
                       ],
                     ),
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      '/item-detail',
-                      arguments: item.id,
-                    ),
+                    onTap: () async {
+                      final result = await Navigator.pushNamed(
+                        context,
+                        '/item-detail',
+                        arguments: item,
+                      );
+
+                      if (result == true) {
+                        _fetchItems(); // Refresh list if item was deleted
+                      }
+                    },
                   ),
                 );
               },

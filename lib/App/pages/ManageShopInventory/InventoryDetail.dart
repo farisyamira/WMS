@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:wms/App/domain/ManageShopInventory/Inventory.dart';
+import 'package:wms/App/Domain/ManageShopInventory/Inventory.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:wms/App/Provider/InventoryController.dart';
 
-class InventoryDetail extends StatelessWidget {
+class displayInventory extends StatelessWidget {
   final Inventory item;
 
-  const InventoryDetail({super.key, required this.item});
+  const displayInventory({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -36,19 +40,22 @@ class InventoryDetail extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Item Name
-            _buildDetailRow("Item Name", item.name),
+            _buildDetailRow("Item Name", item.item_name),
             const SizedBox(height: 10),
 
             // Barcode
-            _buildDetailRow("Barcode", item.barcode),
+            _buildDetailRow("Barcode", item.item_barcode),
             const SizedBox(height: 10),
 
             // Quantity
-            _buildDetailRow("Quantity", item.quantity.toString()),
+            _buildDetailRow("Quantity", item.quantity_available.toString()),
             const SizedBox(height: 10),
 
             // Price
-            _buildDetailRow("Price", "RM ${item.price.toStringAsFixed(2)}"),
+            _buildDetailRow(
+              "Price",
+              "RM ${item.unit_price.toStringAsFixed(2)}",
+            ),
             const SizedBox(height: 30),
 
             // Buttons
@@ -56,15 +63,29 @@ class InventoryDetail extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {
-                    // TODO: Navigate to edit screen
+                  onPressed: () async {
+                    final result = await Navigator.pushNamed(
+                      context,
+                      '/edit-item',
+                      arguments: item,
+                    );
+                    if (result == true) {
+                      Navigator.pop(context, true); // reload list
+                    }
                   },
                   icon: const Icon(Icons.edit),
                   label: const Text('Edit'),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {
-                    // TODO: Add delete logic
+                  onPressed: () async {
+                    final controller = InventoryController();
+                    await controller.deleteItem(item.inventory_id);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Item deleted")),
+                    );
+
+                    Navigator.pop(context, true); // Go back to inventory list
                   },
                   icon: const Icon(Icons.delete),
                   label: const Text('Delete'),

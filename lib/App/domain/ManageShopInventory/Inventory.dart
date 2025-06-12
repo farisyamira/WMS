@@ -1,32 +1,49 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Inventory {
-  final String id;
-  final String name;
+  final String inventory_id;
+  final String item_name;
   final String imageUrl;
-  final int quantity;
-  final String barcode;
-  final double price;
+  final int quantity_available;
+  final String item_barcode;
+  final double unit_price;
+  final DateTime? item_created;
+  final DateTime? item_updated;
 
   Inventory({
-    required this.id,
-    required this.name,
+    required this.inventory_id,
+    required this.item_name,
     required this.imageUrl,
-    required this.barcode,
-    required this.quantity,
-    required this.price,
+    required this.quantity_available,
+    required this.item_barcode,
+    required this.unit_price,
+    this.item_created,
+    this.item_updated,
   });
 
   factory Inventory.fromMap(Map<String, dynamic> data, String docId) {
     return Inventory(
-      id: docId,
-      name: data['name'] ?? '',
+      inventory_id: docId,
+      item_name: data['item_name'] ?? '',
       imageUrl: data['imageUrl'] ?? '',
-      quantity: data['quantity'] ?? 0,
-      barcode: '',
-      price: (data['price'] ?? 0.0).toDouble(),
+      quantity_available: data['quantity_available'] ?? 0,
+      item_barcode: data['itemBarcode'] ?? '',
+      unit_price: (data['unit_price'] ?? 0.0).toDouble(),
+      item_created: (data['item_created'] as Timestamp?)?.toDate(),
+      item_updated: (data['item_updated'] as Timestamp?)?.toDate(),
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {'name': name, 'imageUrl': imageUrl, 'quantity': quantity};
+    return {
+      'item_name': item_name,
+      'imageUrl': imageUrl,
+      'quantity_available': quantity_available,
+      'itemBarcode': item_barcode,
+      'unit_price': unit_price,
+      'item_created':
+          FieldValue.serverTimestamp(), // For Firestore auto timestamp
+      'item_updated': FieldValue.serverTimestamp(),
+    };
   }
 }

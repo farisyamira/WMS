@@ -1,10 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:wms/App/Pages/ManageShopInventory/AddInventoryForm.dart';
+import 'package:wms/App/Domain/ManageShopInventory/Inventory.dart';
+import 'package:wms/App/Pages/ManageShopInventory/EditDetailsForm.dart';
+import 'package:wms/App/Pages/ManageShopInventory/InventoryDetail.dart';
 import 'package:wms/App/Pages/ManageShopInventory/ShopInventory.dart';
+import 'package:wms/App/Pages/ManageShopInventory/AddInventoryForm.dart';
+import 'package:wms/App/Pages/RequestInventory/RequestInventory.dart';
+import 'package:wms/App/Pages/RequestInventory/WorkshopInventory.dart';
 import 'package:wms/App/Pages/homepage.dart';
-import 'package:wms/App/pages/ManageShopInventory/AddInventoryForm.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +51,22 @@ class WMSApp extends StatelessWidget {
       home: const HomePage(),
       routes: {
         '/inventory': (context) => const ShopInventoryPage(),
-        '/add-item': (context) => const AddInventoryForm(),
+        '/add-item': (context) => const navigateToAddForm(),
+        '/request-item': (context) => const RequestInventoryPage(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/item-detail') {
+          final item = settings.arguments as Inventory;
+          return MaterialPageRoute(
+            builder: (context) => displayInventory(item: item),
+          );
+        } else if (settings.name == '/edit-item') {
+          final item = settings.arguments as Inventory;
+          return MaterialPageRoute(
+            builder: (context) => EditDetailsForm(item: item),
+          );
+        }
+        return null;
       },
     );
   }
