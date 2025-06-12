@@ -31,32 +31,46 @@ class WorkshopInventoryPage extends StatelessWidget {
         itemBuilder: (context, index) {
           final item = workshopItems[index];
           return Card(
-            child: ListTile(
-              leading: Image.network(
-                item.imageUrl,
-                width: 60,
-                height: 60,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.image),
-              ),
-              title: Text(
-                item.item_name,
-                style: const TextStyle(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              subtitle: Column(
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [Text(item.item_barcode), Text('$workshopName')],
-              ),
-              trailing: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('RM${item.unit_price.toStringAsFixed(2)}'),
-                  ElevatedButton(
-                    onPressed: () => _sendRequest(context, item),
-                    child: const Text('Request'),
+                  Image.network(
+                    item.imageUrl,
+                    width: 60,
+                    height: 60,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.image),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.item_name,
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(item.item_barcode),
+                        Text(workshopName),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text('RM${item.unit_price.toStringAsFixed(2)}'),
+                      const SizedBox(height: 4),
+                      ElevatedButton(
+                        onPressed: () => _sendRequest(context, item),
+                        child: const Text('Request'),
+                      ),
+                    ],
                   ),
                 ],
               ),

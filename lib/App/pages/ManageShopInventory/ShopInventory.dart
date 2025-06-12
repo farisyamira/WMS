@@ -19,7 +19,25 @@ class _ShopInventoryPageState extends State<ShopInventoryPage> {
   @override
   void initState() {
     super.initState();
-    _fetchItems();
+    _checkAccess();
+  }
+
+  Future<void> _checkAccess() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get();
+    if (doc.exists && doc['role'] != 'Workshop Owner') {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Access denied: Workshop Owners only.')),
+        );
+        Navigator.pop(context);
+      }
+    } else {
+      _fetchItems();
+    }
   }
 
   void _fetchItems() async {

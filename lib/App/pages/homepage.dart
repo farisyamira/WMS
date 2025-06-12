@@ -3,8 +3,41 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  final String userId;
+
+  const HomePage({super.key, required this.userId});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String? userRole;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserRole();
+  }
+
+  Future<void> _fetchUserRole() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+        .get();
+    if (doc.exists) {
+      setState(() {
+        userRole = doc['role'];
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   Widget _buildTile(String label, IconData icon, VoidCallback onTap) {
     return GestureDetector(
@@ -31,6 +64,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       drawer: Drawer(
         child: ListView(
@@ -74,9 +111,10 @@ class HomePage extends StatelessWidget {
           children: [
             _buildTile("Profile", Icons.person, () {}),
             _buildTile("Schedule", Icons.calendar_today, () {}),
-            _buildTile("Inventory", Icons.inventory, () {
-              Navigator.pushNamed(context, '/inventory');
-            }),
+            if (userRole == "Workshop Owner")
+              _buildTile("Inventory", Icons.inventory, () {
+                Navigator.pushNamed(context, '/inventory');
+              }),
             _buildTile("Payment", Icons.credit_card, () {}),
             _buildTile("Rating", Icons.star, () {}),
             _buildTile("Activity Report", Icons.bar_chart, () {}),

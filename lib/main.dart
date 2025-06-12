@@ -9,7 +9,6 @@ import 'package:wms/App/Pages/ManageShopInventory/InventoryDetail.dart';
 import 'package:wms/App/Pages/ManageShopInventory/ShopInventory.dart';
 import 'package:wms/App/Pages/ManageShopInventory/AddInventoryForm.dart';
 import 'package:wms/App/Pages/RequestInventory/RequestInventory.dart';
-import 'package:wms/App/Pages/RequestInventory/WorkshopInventory.dart';
 import 'package:wms/App/Pages/homepage.dart';
 
 void main() async {
@@ -48,7 +47,7 @@ class WMSApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: const HomePage(),
+      home: const HomePage(userId: ''),
       routes: {
         '/inventory': (context) => const ShopInventoryPage(),
         '/add-item': (context) => const navigateToAddForm(),
