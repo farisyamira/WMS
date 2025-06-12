@@ -80,7 +80,10 @@ class _EditDetailsFormState extends State<EditDetailsForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Edit Inventory Item")),
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        title: const Text("Edit Inventory Item"),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(

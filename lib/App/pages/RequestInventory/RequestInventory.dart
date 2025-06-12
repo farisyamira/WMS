@@ -33,6 +33,7 @@ class _RequestInventoryPageState extends State<RequestInventoryPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue,
         title: const Text('Request Inventory'),
         bottom: TabBar(
           controller: _tabController,

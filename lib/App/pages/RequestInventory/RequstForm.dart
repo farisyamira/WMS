@@ -59,7 +59,10 @@ class _RequestFormPageState extends State<RequestFormPage> {
     final item = widget.item;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Request Form")),
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        title: const Text("Request Form"),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(

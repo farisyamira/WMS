@@ -68,7 +68,10 @@ class _navigateToAddFormState extends State<navigateToAddForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Inventory Item')),
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        title: const Text('Add Inventory Item'),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(

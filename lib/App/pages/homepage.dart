@@ -49,6 +49,7 @@ class HomePage extends StatelessWidget {
         ),
       ),
       appBar: AppBar(
+        backgroundColor: Colors.blue,
         title: const Text("Workshop Management System"),
         actions: [IconButton(onPressed: () {}, icon: const Icon(Icons.search))],
         bottom: const PreferredSize(

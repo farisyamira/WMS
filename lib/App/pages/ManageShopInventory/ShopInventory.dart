@@ -51,6 +51,7 @@ class _ShopInventoryPageState extends State<ShopInventoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue,
         title: const Text("Shop Inventory"),
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(30),
