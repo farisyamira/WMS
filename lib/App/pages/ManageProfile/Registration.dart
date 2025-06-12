@@ -82,8 +82,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _usernameController,
-                decoration: _inputDecoration('Username'),
-                validator: (value) => _validateInput(value, 'Username'),
+                decoration: _inputDecoration('Fullname'),
+                validator: (value) => _validateInput(value, 'Fullname'),
               ),
               const SizedBox(height: 16),
               TextFormField(

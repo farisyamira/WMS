@@ -1,13 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:wms/App/Pages/ManageProfile/LoginPage.dart';
 import 'package:wms/App/Pages/ManageProfile/WorkshopOwner_ProfilePage.dart';
 import 'package:wms/App/Pages/ManageProfile/Foreman_ProfilePage.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final String userId;
 
   const HomePage({super.key, required this.userId});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  Map<String, dynamic>? userData;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userId)
+          .get();
+
+      if (doc.exists) {
+        setState(() {
+          userData = doc.data();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User data not found")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: ${e.toString()}")),
+      );
+    }
+  }
 
   Widget _buildTile(String label, IconData icon, VoidCallback onTap) {
     return GestureDetector(
@@ -41,8 +78,7 @@ class HomePage extends StatelessWidget {
           children: [
             const DrawerHeader(
               decoration: BoxDecoration(color: Colors.blue),
-              child: Text("Menu",
-                  style: TextStyle(color: Colors.white, fontSize: 24)),
+              child: Text("Menu", style: TextStyle(color: Colors.white, fontSize: 24)),
             ),
             const ListTile(title: Text("Settings")),
             ListTile(
@@ -85,62 +121,50 @@ class HomePage extends StatelessWidget {
           mainAxisSpacing: 24,
           children: [
             _buildTile("Profile", Icons.person, () async {
-              try {
-                final doc = await FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(userId)
-                    .get();
+              await _fetchUserData(); // Always refresh before opening profile
 
-                final data = doc.data();
+              if (userData == null) return;
 
-                if (data == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("User data not found")),
-                  );
-                  return;
-                }
+              final role = userData!['role']?.toString();
 
-                final role = data['role']?.toString();
-
-                if (role == 'Workshop Owner') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => WorkshopOwnerProfilePage(
-                        ownerName: data['username']?.toString() ?? '',
-                        email: data['email']?.toString() ?? '',
-                        phone: data['phone']?.toString() ?? '',
-                        workshopName: data['workshopName']?.toString() ?? '',
-                        location: data['location']?.toString() ?? '',
-                      ),
+              if (role == 'Workshop Owner') {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WorkshopOwnerProfilePage(
+                      ownerName: userData!['username'] ?? '',
+                      email: userData!['email'] ?? '',
+                      phone: userData!['phone'] ?? '',
+                      workshopName: userData!['workshopName'] ?? '',
+                      location: userData!['location'] ?? '',
+                      operatingHours: userData!['operatingHours'] ?? '',
+                      workshopDetails: userData!['workshopDetails'] ?? '',
                     ),
-                  );
-                } else if (role == 'Foreman') {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ForemanProfilePage(
-                        foremanName: data['username']?.toString() ?? '',
-                        email: data['email']?.toString() ?? '',
-                        phone: data['phone']?.toString() ?? '',
-                        skills: (data['skills'] as List<dynamic>?)
-                                ?.join(', ') ??
-                            '',
-                        type: data['type']?.toString() ?? '',
-                        rating: (data['rating'] is num)
-                            ? (data['rating'] as num).toDouble()
-                            : 0.0,
-                      ),
+                  ),
+                );
+                await _fetchUserData(); // Refresh after returning
+              } else if (role == 'Foreman') {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ForemanProfilePage(
+                      foremanName: userData!['username'] ?? '',
+                      email: userData!['email'] ?? '',
+                      phone: userData!['phone'] ?? '',
+                      skills: (userData!['skills'] as List<dynamic>?)
+                              ?.join(', ') ??
+                          '',
+                      type: userData!['type'] ?? '',
+                      rating: (userData!['rating'] is num)
+                          ? (userData!['rating'] as num).toDouble()
+                          : 0.0,
                     ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Unknown role")),
-                  );
-                }
-              } catch (e) {
+                  ),
+                );
+                await _fetchUserData(); // Refresh after returning
+              } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Error: ${e.toString()}")),
+                  const SnackBar(content: Text("Unknown role")),
                 );
               }
             }),

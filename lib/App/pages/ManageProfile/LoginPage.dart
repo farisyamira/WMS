@@ -64,34 +64,40 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: const Color(0xFFF6F8FA),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Logo section
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.white,
+                backgroundImage: const AssetImage('assets/logo.png'),
+                onBackgroundImageError: (_, __) {},
+                child: Image.asset(
+                  'assets/logo.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(Icons.build, size: 48, color: Colors.blueAccent);
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
               const Text(
                 'Workshop Management System',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
                   color: Colors.blueAccent,
                 ),
               ),
-              const SizedBox(height: 12),
-              const Text(
-                'Welcome Back',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Login to your account',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 30),
               Card(
-                elevation: 8,
+                elevation: 10,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
                 child: Padding(
@@ -100,6 +106,17 @@ class _LoginPageState extends State<LoginPage> {
                     key: _formKey,
                     child: Column(
                       children: [
+                        const Text(
+                          'Welcome Back!',
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Login to your account',
+                          style: TextStyle(fontSize: 15, color: Colors.grey),
+                        ),
+                        const SizedBox(height: 24),
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -162,7 +179,10 @@ class _LoginPageState extends State<LoginPage> {
                                   builder: (context) => const RegistrationPage()),
                             );
                           },
-                          child: const Text("Don't have an account? Register"),
+                          child: const Text(
+                            "Don't have an account? Register",
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
                       ],
                     ),

@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:wms/App/Pages/ManageProfile/EditProfile.dart';
 import 'package:wms/App/Pages/ManageProfile/ChangePassword.dart';
 import 'package:wms/App/Pages/ManageProfile/DeleteProfile.dart';
 
-class WorkshopOwnerProfilePage extends StatelessWidget {
+class WorkshopOwnerProfilePage extends StatefulWidget {
   final String ownerName;
   final String email;
   final String phone;
   final String workshopName;
   final String location;
+  final String operatingHours;
+  final String workshopDetails;
 
   const WorkshopOwnerProfilePage({
     super.key,
@@ -17,14 +21,61 @@ class WorkshopOwnerProfilePage extends StatelessWidget {
     required this.phone,
     required this.workshopName,
     required this.location,
+    required this.operatingHours,
+    required this.workshopDetails,
   });
+
+  @override
+  State<WorkshopOwnerProfilePage> createState() => _WorkshopOwnerProfilePageState();
+}
+
+class _WorkshopOwnerProfilePageState extends State<WorkshopOwnerProfilePage> {
+  late String ownerName;
+  late String email;
+  late String phone;
+  late String workshopName;
+  late String location;
+  late String operatingHours;
+  late String workshopDetails;
+
+  @override
+  void initState() {
+    super.initState();
+    ownerName = widget.ownerName;
+    email = widget.email;
+    phone = widget.phone;
+    workshopName = widget.workshopName;
+    location = widget.location;
+    operatingHours = widget.operatingHours;
+    workshopDetails = widget.workshopDetails;
+  }
+
+  Future<void> _reloadProfile() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    if (doc.exists) {
+      final data = doc.data()!;
+      setState(() {
+        ownerName = data['username'] ?? '';
+        email = data['email'] ?? '';
+        phone = data['phone'] ?? '';
+        workshopName = data['workshopName'] ?? '';
+        location = data['location'] ?? '';
+        operatingHours = data['operatingHours'] ?? '';
+        workshopDetails = data['workshopDetails'] ?? '';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Workshop Owner Profile"),
-        backgroundColor: Colors.teal,
+        backgroundColor: const Color(0xFF448AFF),
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -34,7 +85,7 @@ class WorkshopOwnerProfilePage extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.teal, width: 3),
+                border: Border.all(color: const Color(0xFF448AFF), width: 3),
               ),
               child: const CircleAvatar(
                 radius: 50,
@@ -52,18 +103,21 @@ class WorkshopOwnerProfilePage extends StatelessWidget {
             _infoCard(Icons.phone, "Phone Number", phone),
             _infoCard(Icons.business, "Workshop Name", workshopName),
             _infoCard(Icons.location_on, "Location", location),
+            _infoCard(Icons.access_time, "Operating Hours", operatingHours),
+            _infoCard(Icons.info_outline, "Workshop Detail", workshopDetails),
             const SizedBox(height: 30),
             ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const EditProfilePage()),
                 );
+                await _reloadProfile(); // Reload data after editing
               },
               icon: const Icon(Icons.edit),
               label: const Text("Edit"),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
+                backgroundColor: const Color(0xFF448AFF),
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
@@ -116,10 +170,15 @@ class WorkshopOwnerProfilePage extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: Icon(icon, color: Colors.teal),
-        title: Text(title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        subtitle: Text(value, style: const TextStyle(fontSize: 13)),
+        leading: Icon(icon, color: const Color(0xFF448AFF)),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        subtitle: Text(
+          value,
+          style: const TextStyle(fontSize: 13),
+        ),
       ),
     );
   }

@@ -19,6 +19,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _typeController = TextEditingController();
   final _workshopNameController = TextEditingController();
   final _locationController = TextEditingController();
+  final _operatingHoursController = TextEditingController();
+  final _workshopDetailsController = TextEditingController();
 
   bool _loading = true;
   String? _role;
@@ -52,6 +54,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
           _typeController.text = data?['type'] ?? '';
           _workshopNameController.text = data?['workshopName'] ?? '';
           _locationController.text = data?['location'] ?? '';
+          _operatingHoursController.text = data?['operatingHours'] ?? '';
+          _workshopDetailsController.text = data?['workshopDetails'] ?? '';
           _loading = false;
         });
       }
@@ -77,6 +81,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       } else if (_role == 'Workshop Owner') {
         updatedData['workshopName'] = _workshopNameController.text.trim();
         updatedData['location'] = _locationController.text.trim();
+        updatedData['operatingHours'] = _operatingHoursController.text.trim();
+        updatedData['workshopDetails'] = _workshopDetailsController.text.trim();
       }
 
       await FirebaseFirestore.instance
@@ -131,7 +137,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         TextFormField(
                           controller: _usernameController,
                           decoration:
-                              _inputDecoration('Username', Icons.person),
+                              _inputDecoration('Fullname', Icons.person),
                           validator: (value) =>
                               value == null || value.isEmpty ? 'Required' : null,
                         ),
@@ -203,6 +209,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 _inputDecoration('Location', Icons.location_on),
                           ),
                           const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _operatingHoursController,
+                            decoration: _inputDecoration(
+                                'Operating Hours', Icons.access_time),
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _workshopDetailsController,
+                            decoration: _inputDecoration(
+                                'Workshop Detail', Icons.info_outline),
+                            maxLines: 3,
+                          ),
+                          const SizedBox(height: 16),
                         ],
                         const SizedBox(height: 20),
                         ElevatedButton.icon(
@@ -235,6 +254,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _typeController.dispose();
     _workshopNameController.dispose();
     _locationController.dispose();
+    _operatingHoursController.dispose();
+    _workshopDetailsController.dispose();
     super.dispose();
   }
 }
