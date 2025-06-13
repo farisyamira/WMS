@@ -1,45 +1,32 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
+// lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:wms/App/Pages/homepage.dart';
+import 'package:provider/provider.dart';
+import 'package:wms/App/Controller/scheduleController.dart';
+import 'package:wms/App/pages/Manage Schedule/scheduleManagement.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: FirebaseOptions(
-        apiKey: "AIzaSyBq9vQeClLhk7S-P_6RCC0d-LbD1JwSfYA",
-        authDomain: "wms2025-589e3.firebaseapp.com",
-        databaseURL:
-            "https://wms2025-589e3-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "wms2025-589e3",
-        storageBucket: "wms2025-589e3.firebasestorage.app",
-        messagingSenderId: "1052215173330",
-        appId: "1:1052215173330:web:46970592382c34d5618d0b",
-        measurementId: "G-5XF5JF7XP6",
-      ),
-    );
-  } else {
-    await Firebase.initializeApp();
-  }
-
-  runApp(const WMSApp());
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ScheduleController()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class WMSApp extends StatelessWidget {
-  const WMSApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Workshop Management System',
-      debugShowCheckedModeBanner: false,
+      title: 'WMS',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
       ),
-      home: const HomePage(),
+      // You need to provide a workshopOwnerId here
+      home: const ScheduleManagementPage(workshopOwnerId: 'WO22110'),
     );
   }
 }
