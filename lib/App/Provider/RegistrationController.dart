@@ -1,47 +1,75 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../Domain/ManageProfileModel/ProfileModel.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegistrationController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Generate list of search keywords
+  List<String> _generateKeywords(String input) {
+    input = input.toLowerCase();
+    List<String> result = [];
+    for (int i = 1; i <= input.length; i++) {
+      result.add(input.substring(0, i));
+    }
+    return result;
+  }
 
   Future<String?> registerUser({
     required String username,
     required String email,
     required String password,
     required String role,
+    String? phone,
+    String? workshopName,
+    String? location,
+    String? operatingHours,
+    String? workshopDetails,
+    List<String>? skills,
+    String? type,
   }) async {
     try {
-      final userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
+      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
       );
 
-      final user = userCredential.user;
-      if (user == null) return 'User creation failed.';
+      final uid = userCredential.user!.uid;
 
-      // Set display name (optional)
-      await user.updateDisplayName(username.trim());
+      final usernameKeywords = _generateKeywords(username);
+      final emailKeywords = _generateKeywords(email.split('@').first);
 
-      // Save to Firestore
-      final profile = UserProfile(
-        uid: user.uid,
-        username: username.trim(),
-        email: email.trim(),
-        role: role,
-      );
+      final data = {
+        'uid': uid,
+        'username': username,
+        'email': email,
+        'role': role,
+        'phone': phone ?? '',
+        'createdAt': FieldValue.serverTimestamp(),
+        'keywords': [...usernameKeywords, ...emailKeywords],
+      };
 
-      await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .set(profile.toMap(), SetOptions(merge: false));
+      if (role == 'Workshop Owner') {
+        data.addAll({
+          'workshopName': workshopName ?? '',
+          'location': location ?? '',
+          'operatingHours': operatingHours ?? '',
+          'workshopDetails': workshopDetails ?? '',
+        });
+      } else if (role == 'Foreman') {
+        data.addAll({
+          'skills': skills ?? [],
+          'type': type ?? '',
+          'rating': 0.0,
+        });
+      }
 
-      return null;
+      await _firestore.collection('users').doc(uid).set(data);
+      return null; // Success
     } on FirebaseAuthException catch (e) {
       return e.message;
     } catch (e) {
-      return 'Registration failed: $e';
+      return "An unknown error occurred.";
     }
   }
 }

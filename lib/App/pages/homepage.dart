@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:wms/App/Pages/ManageProfile/LoginPage.dart';
+import 'package:wms/App/Pages/ManageProfile/SearchPage.dart';
 import 'package:wms/App/Pages/ManageProfile/WorkshopOwner_ProfilePage.dart';
 import 'package:wms/App/Pages/ManageProfile/Foreman_ProfilePage.dart';
 
@@ -47,44 +48,82 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildTile(String label, IconData icon, VoidCallback onTap) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.blue[200],
-              borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(20),
+      child: Ink(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blue.shade100,
+              blurRadius: 8,
+              offset: const Offset(2, 4),
             ),
-            padding: const EdgeInsets.all(24),
-            child: Icon(icon, size: 40, color: Colors.white),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-        ],
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blueAccent, Colors.lightBlueAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                shape: BoxShape.circle,
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Icon(icon, size: 36, color: Colors.white),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final role = userData?['role'];
+
     return Scaffold(
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
-              child: Text("Menu", style: TextStyle(color: Colors.white, fontSize: 24)),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue, Colors.lightBlueAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Text(
+                "Menu",
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
             ),
-            const ListTile(title: Text("Settings")),
+            const ListTile(
+              leading: Icon(Icons.settings),
+              title: Text("Settings"),
+            ),
             ListTile(
-              title: const Text("Logout"),
               leading: const Icon(Icons.logout),
+              title: const Text("Logout"),
               onTap: () {
+                FirebaseAuth.instance.signOut();
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const LoginPage()),
                   (route) => false,
@@ -96,15 +135,26 @@ class _HomePageState extends State<HomePage> {
       ),
       appBar: AppBar(
         title: const Text("Workshop Management System"),
+        backgroundColor: Colors.blueAccent,
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search))
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SearchPage(currentUserId: widget.userId),
+                ),
+              );
+            },
+          ),
         ],
         bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(30.0),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(left: 16.0, bottom: 8),
+          preferredSize: Size.fromHeight(28),
+          child: Padding(
+            padding: EdgeInsets.only(left: 16.0, bottom: 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
               child: Text(
                 "Main Page",
                 style: TextStyle(color: Colors.white70, fontSize: 16),
@@ -113,22 +163,20 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+      backgroundColor: Colors.grey.shade100,
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(20.0),
         child: GridView.count(
           crossAxisCount: 2,
-          crossAxisSpacing: 24,
-          mainAxisSpacing: 24,
+          crossAxisSpacing: 20,
+          mainAxisSpacing: 20,
           children: [
             _buildTile("Profile", Icons.person, () async {
-              await _fetchUserData(); // Always refresh before opening profile
-
+              await _fetchUserData();
               if (userData == null) return;
 
-              final role = userData!['role']?.toString();
-
               if (role == 'Workshop Owner') {
-                await Navigator.push(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => WorkshopOwnerProfilePage(
@@ -142,18 +190,16 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 );
-                await _fetchUserData(); // Refresh after returning
               } else if (role == 'Foreman') {
-                await Navigator.push(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => ForemanProfilePage(
                       foremanName: userData!['username'] ?? '',
                       email: userData!['email'] ?? '',
                       phone: userData!['phone'] ?? '',
-                      skills: (userData!['skills'] as List<dynamic>?)
-                              ?.join(', ') ??
-                          '',
+                      skills:
+                          (userData!['skills'] as List<dynamic>?)?.join(', ') ?? '',
                       type: userData!['type'] ?? '',
                       rating: (userData!['rating'] is num)
                           ? (userData!['rating'] as num).toDouble()
@@ -161,15 +207,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 );
-                await _fetchUserData(); // Refresh after returning
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Unknown role")),
-                );
               }
             }),
             _buildTile("Schedule", Icons.calendar_today, () {}),
-            _buildTile("Inventory", Icons.inventory, () {}),
+            if (role == 'Workshop Owner')
+              _buildTile("Inventory", Icons.inventory, () {}),
             _buildTile("Payment", Icons.credit_card, () {}),
             _buildTile("Rating", Icons.star, () {}),
             _buildTile("Activity Report", Icons.bar_chart, () {}),

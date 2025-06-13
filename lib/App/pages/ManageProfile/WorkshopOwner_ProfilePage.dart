@@ -13,6 +13,7 @@ class WorkshopOwnerProfilePage extends StatefulWidget {
   final String location;
   final String operatingHours;
   final String workshopDetails;
+  final bool isMe;
 
   const WorkshopOwnerProfilePage({
     super.key,
@@ -23,6 +24,7 @@ class WorkshopOwnerProfilePage extends StatefulWidget {
     required this.location,
     required this.operatingHours,
     required this.workshopDetails,
+    this.isMe = true, // default is true
   });
 
   @override
@@ -37,6 +39,7 @@ class _WorkshopOwnerProfilePageState extends State<WorkshopOwnerProfilePage> {
   late String location;
   late String operatingHours;
   late String workshopDetails;
+  late bool isMe;
 
   @override
   void initState() {
@@ -48,6 +51,7 @@ class _WorkshopOwnerProfilePageState extends State<WorkshopOwnerProfilePage> {
     location = widget.location;
     operatingHours = widget.operatingHours;
     workshopDetails = widget.workshopDetails;
+    isMe = widget.isMe;
   }
 
   Future<void> _reloadProfile() async {
@@ -106,58 +110,62 @@ class _WorkshopOwnerProfilePageState extends State<WorkshopOwnerProfilePage> {
             _infoCard(Icons.access_time, "Operating Hours", operatingHours),
             _infoCard(Icons.info_outline, "Workshop Detail", workshopDetails),
             const SizedBox(height: 30),
-            ElevatedButton.icon(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const EditProfilePage()),
-                );
-                await _reloadProfile(); // Reload data after editing
-              },
-              icon: const Icon(Icons.edit),
-              label: const Text("Edit"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF448AFF),
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+
+            // Only show these buttons if this is the current user's profile
+            if (isMe) ...[
+              ElevatedButton.icon(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const EditProfilePage()),
+                  );
+                  await _reloadProfile(); // Reload after editing
+                },
+                icon: const Icon(Icons.edit),
+                label: const Text("Edit"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF448AFF),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            OutlinedButton.icon(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => const DeleteProfilePage(),
-                );
-              },
-              icon: const Icon(Icons.delete),
-              label: const Text("Delete Profile"),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: const BorderSide(color: Colors.red),
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => const DeleteProfilePage(),
+                  );
+                },
+                icon: const Icon(Icons.delete),
+                label: const Text("Delete Profile"),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  side: const BorderSide(color: Colors.red),
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            TextButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ChangePasswordPage()),
-                );
-              },
-              icon: const Icon(Icons.lock_reset),
-              label: const Text("Change Password"),
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.teal,
+              const SizedBox(height: 12),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ChangePasswordPage()),
+                  );
+                },
+                icon: const Icon(Icons.lock_reset),
+                label: const Text("Change Password"),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.teal,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),
