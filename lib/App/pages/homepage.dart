@@ -5,6 +5,7 @@ import 'package:wms/App/Pages/ManageProfile/LoginPage.dart';
 import 'package:wms/App/Pages/ManageProfile/SearchPage.dart';
 import 'package:wms/App/Pages/ManageProfile/WorkshopOwner_ProfilePage.dart';
 import 'package:wms/App/Pages/ManageProfile/Foreman_ProfilePage.dart';
+import 'package:wms/App/Pages/ManageShopInventory/ShopInventory.dart';
 
 class HomePage extends StatefulWidget {
   final String userId;
@@ -134,8 +135,9 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       appBar: AppBar(
+        backgroundColor: Colors.blue,
         title: const Text("Workshop Management System"),
-        backgroundColor: Colors.blueAccent,
+        
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -210,8 +212,14 @@ class _HomePageState extends State<HomePage> {
               }
             }),
             _buildTile("Schedule", Icons.calendar_today, () {}),
+
             if (role == 'Workshop Owner')
-              _buildTile("Inventory", Icons.inventory, () {}),
+             
+
+            _buildTile("Inventory", Icons.inventory, () {
+              Navigator.pushNamed(context, '/inventory');
+            }),
+
             _buildTile("Payment", Icons.credit_card, () {}),
             _buildTile("Rating", Icons.star, () {}),
             _buildTile("Activity Report", Icons.bar_chart, () {}),

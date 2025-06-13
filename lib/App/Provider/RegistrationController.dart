@@ -6,13 +6,20 @@ class RegistrationController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Generate list of search keywords
-  List<String> _generateKeywords(String input) {
-    input = input.toLowerCase();
-    List<String> result = [];
-    for (int i = 1; i <= input.length; i++) {
-      result.add(input.substring(0, i));
+  List<String> generateKeywords(Map<String, dynamic> userData) {
+    final keywords = <String>[];
+
+    void addKeyword(String? value) {
+      if (value != null && value.isNotEmpty) {
+        keywords.addAll(value.toLowerCase().split(' '));
+      }
     }
-    return result;
+
+    addKeyword(userData['username']);
+    addKeyword(userData['email']);
+    addKeyword(userData['type']); // for Foreman
+
+    return keywords.toSet().toList(); // remove duplicates
   }
 
   Future<String?> registerUser({
@@ -36,8 +43,13 @@ class RegistrationController {
 
       final uid = userCredential.user!.uid;
 
-      final usernameKeywords = _generateKeywords(username);
-      final emailKeywords = _generateKeywords(email.split('@').first);
+      final userData = {
+        'username': username,
+        'email': email,
+        'type': type ?? '',
+      };
+
+      final keywords = generateKeywords(userData);
 
       final data = {
         'uid': uid,
@@ -46,7 +58,7 @@ class RegistrationController {
         'role': role,
         'phone': phone ?? '',
         'createdAt': FieldValue.serverTimestamp(),
-        'keywords': [...usernameKeywords, ...emailKeywords],
+        'keywords': keywords,
       };
 
       if (role == 'Workshop Owner') {
@@ -65,11 +77,11 @@ class RegistrationController {
       }
 
       await _firestore.collection('users').doc(uid).set(data);
-      return null; // Success
+      return null;
     } on FirebaseAuthException catch (e) {
       return e.message;
     } catch (e) {
-      return "An unknown error occurred.";
+      return "An unknown error occurred: $e";
     }
   }
 }

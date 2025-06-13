@@ -17,25 +17,29 @@ class _SearchPageState extends State<SearchPage> {
   List<Map<String, dynamic>> searchResults = [];
 
   void _performSearch(String query) async {
-    if (query.isEmpty) {
-      setState(() => searchResults.clear());
-      return;
-    }
-
-    final result = await FirebaseFirestore.instance
-        .collection('users')
-        .where('keywords', arrayContains: query.toLowerCase())
-        .get();
-
-    final filtered = result.docs
-        .where((doc) => doc.id != widget.currentUserId) // Exclude self
-        .map((doc) => {'id': doc.id, ...doc.data()})
-        .toList();
-
-    setState(() {
-      searchResults = filtered;
-    });
+  if (query.isEmpty) {
+    setState(() => searchResults.clear());
+    return;
   }
+
+  // Search lowercase keyword
+  final lowerQuery = query.toLowerCase();
+
+  final result = await FirebaseFirestore.instance
+      .collection('users')
+      .where('keywords', arrayContains: lowerQuery)
+      .get();
+
+  final filtered = result.docs
+      .where((doc) => doc.id != widget.currentUserId)
+      .map((doc) => {'id': doc.id, ...doc.data()})
+      .toList();
+
+  setState(() {
+    searchResults = filtered;
+  });
+}
+
 
   @override
   void dispose() {
