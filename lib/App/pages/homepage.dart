@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:wms/App/pages/Manage Schedule/scheduleManagement.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final String workshopOwnerId;
+
+  const HomePage({super.key, required this.workshopOwnerId});
 
   Widget _buildTile(String label, IconData icon, VoidCallback onTap) {
     return GestureDetector(
@@ -70,7 +73,16 @@ class HomePage extends StatelessWidget {
           mainAxisSpacing: 24,
           children: [
             _buildTile("Profile", Icons.person, () {}),
-            _buildTile("Schedule", Icons.calendar_today, () {}),
+            _buildTile("Schedule", Icons.calendar_today, () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ScheduleManagementPage(
+                    workshopOwnerId: workshopOwnerId,
+                  ),
+                ),
+              );
+            }),
             _buildTile("Inventory", Icons.inventory, () {}),
             _buildTile("Payment", Icons.credit_card, () {}),
             _buildTile("Rating", Icons.star, () {}),
