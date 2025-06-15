@@ -98,7 +98,7 @@ class JobSchedule {
     return JobSchedule(
       jobScheduleId: data['jobScheduleId'] ?? '',
       jobDescription: data['jobDescription'] ?? '',
-      jobDate: data['jobDate'] is Timestamp 
+      jobDate: data['jobDate'] is Timestamp
           ? (data['jobDate'] as Timestamp).toDate()
           : DateTime.now(),
       jobTime: data['jobTime'] ?? '',
@@ -112,10 +112,10 @@ class JobSchedule {
       updatedAt: data['updatedAt'] is Timestamp
           ? (data['updatedAt'] as Timestamp).toDate()
           : DateTime.now(),
-      deletedAt: data['deletedAt'] != null 
+      deletedAt: data['deletedAt'] != null
           ? (data['deletedAt'] is Timestamp
-              ? (data['deletedAt'] as Timestamp).toDate()
-              : null)
+                ? (data['deletedAt'] as Timestamp).toDate()
+                : null)
           : null,
       foremanId: data['foremanId'] ?? '',
       workshopOwnerId: data['workshopOwnerId'] ?? '',

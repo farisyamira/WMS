@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wms/App/Controller/scheduleController.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DeleteJobSchedulePage extends StatelessWidget {
   final String scheduleId;
@@ -25,13 +26,15 @@ class DeleteJobSchedulePage extends StatelessWidget {
         TextButton(
           onPressed: () async {
             try {
-              await Provider.of<ScheduleController>(context, listen: false)
-                  .deleteJobSchedule(scheduleId, workshopOwnerId);
+              await Provider.of<ScheduleController>(
+                context,
+                listen: false,
+              ).deleteJobSchedule(scheduleId, workshopOwnerId);
               Navigator.pop(context);
             } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Error: $e')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('Error: $e')));
             }
           },
           child: const Text('Delete'),

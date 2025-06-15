@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wms/App/Domain/ManageSchedule/schedule.model.dart';
 import 'package:wms/App/pages/Manage Schedule/addJobSchedule.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SelectForemanPage extends StatelessWidget {
   final Foreman foreman;
@@ -10,9 +11,7 @@ class SelectForemanPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(foreman.name),
-      ),
+      appBar: AppBar(title: Text(foreman.name)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -49,7 +48,8 @@ class SelectForemanPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddJobSchedulePage(foreman: foreman),
+                      builder: (context) =>
+                          AddJobSchedulePage(foreman: foreman),
                     ),
                   );
                 },

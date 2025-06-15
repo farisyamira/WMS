@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:provider/provider.dart';
 import 'package:wms/App/Controller/scheduleController.dart';
 import 'package:wms/App/Domain/ManageSchedule/schedule.model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AcceptJobPage extends StatelessWidget {
   final JobSchedule schedule;
@@ -12,9 +13,7 @@ class AcceptJobPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Job Assignment'),
-      ),
+      appBar: AppBar(title: const Text('Job Assignment')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -41,7 +40,9 @@ class AcceptJobPage extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text('Type: ${schedule.jobType}'),
                     Text('Location: ${schedule.jobLocation}'),
-                    Text('Date: ${DateFormat('MMMM d, yyyy').format(schedule.jobDate)}'),
+                    Text(
+                      'Date: ${DateFormat('MMMM d, yyyy').format(schedule.jobDate)}',
+                    ),
                     Text('Time: ${schedule.jobTime}'),
                     Text('Status: ${schedule.jobStatus}'),
                   ],
@@ -58,12 +59,12 @@ class AcceptJobPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                  ),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                   onPressed: () {
-                    Provider.of<ScheduleController>(context, listen: false)
-                        .updateJobStatus(schedule.jobScheduleId, 'Rejected');
+                    Provider.of<ScheduleController>(
+                      context,
+                      listen: false,
+                    ).updateJobStatus(schedule.jobScheduleId, 'Rejected');
                     Navigator.pop(context);
                   },
                   child: const Text('Reject'),
@@ -73,8 +74,10 @@ class AcceptJobPage extends StatelessWidget {
                     backgroundColor: Colors.green,
                   ),
                   onPressed: () {
-                    Provider.of<ScheduleController>(context, listen: false)
-                        .updateJobStatus(schedule.jobScheduleId, 'Accepted');
+                    Provider.of<ScheduleController>(
+                      context,
+                      listen: false,
+                    ).updateJobStatus(schedule.jobScheduleId, 'Accepted');
                     Navigator.pop(context);
                   },
                   child: const Text('Accept'),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:provider/provider.dart';
 import 'package:wms/App/Controller/scheduleController.dart';
 import 'package:wms/App/Domain/ManageSchedule/schedule.model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddJobSchedulePage extends StatefulWidget {
   final Foreman foreman;
@@ -50,9 +52,7 @@ class _AddJobSchedulePageState extends State<AddJobSchedulePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Job Schedule'),
-      ),
+      appBar: AppBar(title: const Text('Add Job Schedule')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -63,7 +63,10 @@ class _AddJobSchedulePageState extends State<AddJobSchedulePage> {
               children: [
                 Text(
                   'For Foreman: ${widget.foreman.name}',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 TextFormField(
@@ -173,18 +176,24 @@ class _AddJobSchedulePageState extends State<AddJobSchedulePage> {
                         );
 
                         try {
-                          await Provider.of<ScheduleController>(context, listen: false)
-                              .addJobSchedule(newSchedule, widget.foreman.workshopOwnerId);
+                          await Provider.of<ScheduleController>(
+                            context,
+                            listen: false,
+                          ).addJobSchedule(
+                            newSchedule,
+                            widget.foreman.workshopOwnerId,
+                          );
                           Navigator.pop(context);
                         } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Error: $e')),
-                          );
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text('Error: $e')));
                         }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Please fill all fields')),
+                            content: Text('Please fill all fields'),
+                          ),
                         );
                       }
                     },

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:wms/App/Domain/ManageSchedule/schedule.model.dart';
 import 'package:wms/App/pages/Manage%20Schedule/acceptJob.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ViewJobSchedulePage extends StatelessWidget {
   final List<JobSchedule> schedules;

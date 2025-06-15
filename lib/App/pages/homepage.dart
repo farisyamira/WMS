@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wms/App/pages/Manage Schedule/scheduleManagement.dart';
 
@@ -77,9 +79,8 @@ class HomePage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ScheduleManagementPage(
-                    workshopOwnerId: workshopOwnerId,
-                  ),
+                  builder: (context) =>
+                      ScheduleManagementPage(workshopOwnerId: workshopOwnerId),
                 ),
               );
             }),

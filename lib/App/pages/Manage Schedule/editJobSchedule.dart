@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:provider/provider.dart';
 import 'package:wms/App/Controller/scheduleController.dart';
 import 'package:wms/App/Domain/ManageSchedule/schedule.model.dart';
@@ -28,8 +28,12 @@ class _EditJobSchedulePageState extends State<EditJobSchedulePage> {
   @override
   void initState() {
     super.initState();
-    _jobDescriptionController = TextEditingController(text: widget.schedule.jobDescription);
-    _jobLocationController = TextEditingController(text: widget.schedule.jobLocation);
+    _jobDescriptionController = TextEditingController(
+      text: widget.schedule.jobDescription,
+    );
+    _jobLocationController = TextEditingController(
+      text: widget.schedule.jobLocation,
+    );
     _jobTypeController = TextEditingController(text: widget.schedule.jobType);
     _jobTimeController = TextEditingController(text: widget.schedule.jobTime);
     _selectedDate = widget.schedule.jobDate;
@@ -52,7 +56,9 @@ class _EditJobSchedulePageState extends State<EditJobSchedulePage> {
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(DateTime.parse('2023-01-01 ${widget.schedule.jobTime}')),
+      initialTime: TimeOfDay.fromDateTime(
+        DateTime.parse('2023-01-01 ${widget.schedule.jobTime}'),
+      ),
     );
     if (picked != null) {
       setState(() {
@@ -64,9 +70,7 @@ class _EditJobSchedulePageState extends State<EditJobSchedulePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Job Schedule'),
-      ),
+      appBar: AppBar(title: const Text('Edit Job Schedule')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -75,7 +79,10 @@ class _EditJobSchedulePageState extends State<EditJobSchedulePage> {
             children: [
               Text(
                 'For Foreman: ${widget.schedule.selectedForeman}',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 24),
               TextField(
@@ -140,7 +147,9 @@ class _EditJobSchedulePageState extends State<EditJobSchedulePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
                     onPressed: () => Navigator.pop(context),
                     child: const Text('Cancel'),
                   ),
@@ -163,16 +172,18 @@ class _EditJobSchedulePageState extends State<EditJobSchedulePage> {
                       );
 
                       try {
-                        await Provider.of<ScheduleController>(context, listen: false)
-                            .updateJobSchedule(
-                              widget.schedule.jobScheduleId,
-                              updatedSchedule.toMap(),
-                            );
+                        await Provider.of<ScheduleController>(
+                          context,
+                          listen: false,
+                        ).updateJobSchedule(
+                          widget.schedule.jobScheduleId,
+                          updatedSchedule.toMap(),
+                        );
                         Navigator.pop(context);
                       } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Error: $e')),
-                        );
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text('Error: $e')));
                       }
                     },
                     child: const Text('Save Changes'),
