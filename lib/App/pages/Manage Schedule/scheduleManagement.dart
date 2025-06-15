@@ -6,7 +6,7 @@ import 'package:wms/App/pages/Manage Schedule/selectForeman.dart';
 class ScheduleManagementPage extends StatefulWidget {
   final String workshopOwnerId;
 
-  const ScheduleManagementPage({Key? key, required this.workshopOwnerId}) : super(key: key);
+  const ScheduleManagementPage({super.key, required this.workshopOwnerId});
 
   @override
   _ScheduleManagementPageState createState() => _ScheduleManagementPageState();
@@ -17,8 +17,10 @@ class _ScheduleManagementPageState extends State<ScheduleManagementPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ScheduleController>(context, listen: false)
-          .loadForemen(widget.workshopOwnerId);
+      Provider.of<ScheduleController>(
+        context,
+        listen: false,
+      ).loadForemen(widget.workshopOwnerId);
     });
   }
 
@@ -27,18 +29,16 @@ class _ScheduleManagementPageState extends State<ScheduleManagementPage> {
     final controller = Provider.of<ScheduleController>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Manage Schedule - List of Foremen'),
-      ),
+      appBar: AppBar(title: const Text('Manage Schedule - List of Foremen')),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
               'Schedule Management',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
@@ -49,7 +49,10 @@ class _ScheduleManagementPageState extends State<ScheduleManagementPage> {
                     itemBuilder: (context, index) {
                       final foreman = controller.foremen[index];
                       return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 16,
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Row(
@@ -69,7 +72,8 @@ class _ScheduleManagementPageState extends State<ScheduleManagementPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => SelectForemanPage(foreman: foreman),
+                                      builder: (context) =>
+                                          SelectForemanPage(foreman: foreman),
                                     ),
                                   );
                                 },

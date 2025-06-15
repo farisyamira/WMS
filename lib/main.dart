@@ -10,21 +10,19 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => ScheduleController()),
       ],
-      child: const MyApp(),
+      child: const WMSApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class WMSApp extends StatelessWidget {
+  const WMSApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'WMS',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       // You need to provide a workshopOwnerId here
       home: const ScheduleManagementPage(workshopOwnerId: 'WO22110'),
     );

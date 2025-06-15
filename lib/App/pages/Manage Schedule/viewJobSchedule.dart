@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:wms/App/Domain/ManageSchedule/schedule.model.dart';
+import 'package:wms/App/pages/Manage%20Schedule/acceptJob.dart';
 
 class ViewJobSchedulePage extends StatelessWidget {
   final List<JobSchedule> schedules;
@@ -10,9 +11,7 @@ class ViewJobSchedulePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Job Schedules'),
-      ),
+      appBar: AppBar(title: const Text('My Job Schedules')),
       body: ListView.builder(
         itemCount: schedules.length,
         itemBuilder: (context, index) {
@@ -26,7 +25,9 @@ class ViewJobSchedulePage extends StatelessWidget {
                 children: [
                   Text('Type: ${schedule.jobType}'),
                   Text('Location: ${schedule.jobLocation}'),
-                  Text('Date: ${DateFormat('yyyy-MM-dd').format(schedule.jobDate)}'),
+                  Text(
+                    'Date: ${DateFormat('yyyy-MM-dd').format(schedule.jobDate)}',
+                  ),
                   Text('Time: ${schedule.jobTime}'),
                   Text(
                     'Status: ${schedule.jobStatus}',
@@ -34,8 +35,8 @@ class ViewJobSchedulePage extends StatelessWidget {
                       color: schedule.jobStatus == 'Accepted'
                           ? Colors.green
                           : schedule.jobStatus == 'Rejected'
-                              ? Colors.red
-                              : Colors.orange,
+                          ? Colors.red
+                          : Colors.orange,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -48,7 +49,8 @@ class ViewJobSchedulePage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AcceptJobPage(schedule: schedule),
+                            builder: (context) =>
+                                AcceptJobPage(schedule: schedule),
                           ),
                         );
                       },
